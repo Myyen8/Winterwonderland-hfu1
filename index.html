@@ -20,16 +20,18 @@
     
     <script>
         const targetObject = document.querySelector('#snow');
-        // Skalierungsfaktor für die gesamte Szene, falls nötig, um die Responsivität anzupassen.
-        // const scaleFactor = 1; 
-
+        
+        // **DEFINIERE DIE HORIZONTALE EBENE**
+        // Alle stehenden Elemente werden diese Y-Position als Boden verwenden.
+        const GROUND_Y_POSITION = -1.0; 
+        
         // 🌨️ SCHNEEFLOCKEN 🌨️
         for (let i = 0; i < 100; i++) {
             const plane = document.createElement('a-plane');
-            const size = (Math.random() * 0.3 + 0.01).toFixed(2); // Größe reduziert
-            const bounds = 3; // Begrenzung des Schneefallbereichs
+            const size = (Math.random() * 0.3 + 0.01).toFixed(2);
+            const bounds = 3; 
             const startY = Math.random() * 4 + 1;
-            const endY = -5;
+            const endY = GROUND_Y_POSITION; // Schneeflocken fallen bis zur definierten horizontalen Ebene
 
             const startX = (Math.random() - 0.5) * bounds;
             const startZ = (Math.random() - 0.5) * bounds;
@@ -40,11 +42,10 @@
             plane.setAttribute('material', {
                 src: 'assets/schneeflocken.png',
                 alphaTest: 0.5,
-                transparent: true // Fügt Transparenz hinzu
+                transparent: true
             });
 
-            // WICHTIG: Stelle sicher, dass die Schneeflocke immer zur Kamera zeigt, 
-            // damit sie nicht nur als dünne Linie erscheint, wenn sie gedreht wird.
+            // WICHTIG: Stellt sicher, dass die Ebene immer horizontal zur Kamera ausgerichtet ist.
             plane.setAttribute('look-at-camera', ''); 
 
             const duration = 4000 + Math.random() * 3000;
@@ -74,11 +75,12 @@
         }
 
         // 🎄 TANNENBÄUME 🎄
-        const treeCount = 20; // Reduzierte Anzahl für Performance
-        const areaBounds = 5; // Die Bäume werden in einem quadratischen Bereich platziert
+        const treeCount = 20; 
+        const areaBounds = 5; 
         const treeSizeX = 1;
         const treeSizeY = 2;
-        const treePosY = -1.0; // Die Bäume sitzen auf dem Schneeboden (-1.0)
+        // WICHTIG: Die Bäume stehen genau auf der definierten horizontalen Ebene
+        const treePosY = GROUND_Y_POSITION; 
 
         for (let i = 0; i < treeCount; i++) {
             const tree = document.createElement('a-plane');
@@ -90,6 +92,7 @@
             tree.setAttribute('width', treeSizeX * randomScale);
             tree.setAttribute('height', treeSizeY * randomScale);
 
+            // WICHTIG: Verwende die definierte Y-Position
             tree.setAttribute('position', `${posX.toFixed(2)} ${treePosY} ${posZ.toFixed(2)}`);
 
             // WICHTIG: Stellt sicher, dass die Bäume immer zur Kamera zeigen
@@ -106,16 +109,18 @@
 
         // ❄️ SCHNEEBODEN ❄️
         const snowGround = document.createElement('a-plane');
-        const groundSize = 10; // Reduzierte Bodengröße, um näher an der AR-Markierung zu sein
+        const groundSize = 10; 
 
         snowGround.setAttribute('width', groundSize);
         snowGround.setAttribute('height', groundSize);
+        // WICHTIG: Die Rotation ist fest auf -90 0 0, um eine flache, horizontale Oberfläche zu gewährleisten
         snowGround.setAttribute('rotation', '-90 0 0'); 
-        snowGround.setAttribute('position', `0 ${treePosY} 0`); // Position angepasst, damit Bäume darauf stehen
+        // WICHTIG: Die Position in Y definiert die horizontale Ebene 
+        snowGround.setAttribute('position', `0 ${GROUND_Y_POSITION} 0`); 
 
         snowGround.setAttribute('material', {
             src: 'assets/snowground.png',
-            repeat: '5 5', // Repeat angepasst
+            repeat: '5 5', 
             transparent: true,
             alphaTest: 0.1, 
         });
