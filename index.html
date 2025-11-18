@@ -4,6 +4,7 @@
 <head>
     <title>Simple AR - A Web based AR for A-Frame</title>
     <script src="js/aframe-v1.5.0.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@1.0.0/dist/aframe-look-at-component.min.js"></script>
 </head>
 
 <body>
@@ -11,33 +12,40 @@
     <a-scene>
         <a-entity simple-ar="src: assets/schneemann.jpeg; minCutOffValue: 1; betaValue:0.1;">
             <a-entity id="snow"></a-entity>
-           <a-sound src="assets/background_music.mp3" autoplay="true" loop="true" volume="0.5"></a-sound>
+            <a-sound src="assets/background_music.mp3" autoplay="true" loop="true" volume="0.5"></a-sound>
         </a-entity>
         <a-camera position="0 0 0"></a-camera>
     </a-scene>
 
     
     <script>
-
         const targetObject = document.querySelector('#snow');
+        // Skalierungsfaktor für die gesamte Szene, falls nötig, um die Responsivität anzupassen.
+        // const scaleFactor = 1; 
 
+        // 🌨️ SCHNEEFLOCKEN 🌨️
         for (let i = 0; i < 100; i++) {
             const plane = document.createElement('a-plane');
-            const size = (Math.random() * 0.7 + 0.02).toFixed(2);
+            const size = (Math.random() * 0.3 + 0.01).toFixed(2); // Größe reduziert
+            const bounds = 3; // Begrenzung des Schneefallbereichs
+            const startY = Math.random() * 4 + 1;
+            const endY = -5;
 
-            const startX = (Math.random() - 0.5) * 8;
-            const startY = Math.random() * 6 + 2;
-            const startZ = (Math.random() - 0.5) * 8;
-
-            const endY = -10;
+            const startX = (Math.random() - 0.5) * bounds;
+            const startZ = (Math.random() - 0.5) * bounds;
 
             plane.setAttribute('width', size);
             plane.setAttribute('height', size);
             plane.setAttribute('position', `${startX} ${startY} ${startZ}`);
             plane.setAttribute('material', {
                 src: 'assets/schneeflocken.png',
-                alphaTest: 0.5
+                alphaTest: 0.5,
+                transparent: true // Fügt Transparenz hinzu
             });
+
+            // WICHTIG: Stelle sicher, dass die Schneeflocke immer zur Kamera zeigt, 
+            // damit sie nicht nur als dünne Linie erscheint, wenn sie gedreht wird.
+            plane.setAttribute('look-at-camera', ''); 
 
             const duration = 4000 + Math.random() * 3000;
 
@@ -51,9 +59,9 @@
             });
 
             plane.addEventListener('animationloop', () => {
-                const newX = (Math.random() - 0.5) * 8;
-                const newY = Math.random() * 6 + 2;
-                const newZ = (Math.random() - 0.5) * 8;
+                const newX = (Math.random() - 0.5) * bounds;
+                const newY = Math.random() * 4 + 1;
+                const newZ = (Math.random() - 0.5) * bounds;
 
                 plane.setAttribute('animation__fall', {
                     from: `${newX} ${newY} ${newZ}`,
@@ -65,81 +73,55 @@
             targetObject.appendChild(plane);
         }
 
-const treeCount = 25;
-        const radius = 4; // Abstand vom Zentrum
-        
+        // 🎄 TANNENBÄUME 🎄
+        const treeCount = 20; // Reduzierte Anzahl für Performance
+        const areaBounds = 5; // Die Bäume werden in einem quadratischen Bereich platziert
+        const treeSizeX = 1;
+        const treeSizeY = 2;
+        const treePosY = -1.0; // Die Bäume sitzen auf dem Schneeboden (-1.0)
+
         for (let i = 0; i < treeCount; i++) {
             const tree = document.createElement('a-plane');
 
-            // Berechnung des gleichmäßigen Winkels in Radian
-            const angle = (i / treeCount) * 2 * Math.PI; 
+            const posX = (Math.random() - 0.5) * areaBounds * 2;
+            const posZ = (Math.random() - 0.5) * areaBounds * 2;
 
-            // Symmetrische Position (Kreis-Formel)
-            const posX = radius * Math.cos(angle);
-            const posZ = radius * Math.sin(angle);
-            const posY = -1.2; // Bodenhöhe der Bäume
-            
-            const sizeX = 1.5;
-            const sizeY = 2.5;
+            const randomScale = Math.random() * 0.4 + 0.8;
+            tree.setAttribute('width', treeSizeX * randomScale);
+            tree.setAttribute('height', treeSizeY * randomScale);
 
-            // Optionale, leichte Größenvariation
-            const randomScale = Math.random() * 0.4 + 0.8; 
-            tree.setAttribute('width', sizeX * randomScale);
-            tree.setAttribute('height', sizeY * randomScale);
+            tree.setAttribute('position', `${posX.toFixed(2)} ${treePosY} ${posZ.toFixed(2)}`);
 
-
-            // Setze Position mit 2 Dezimalstellen für Sauberkeit
-            tree.setAttribute('position', `${posX.toFixed(2)} ${posY} ${posZ.toFixed(2)}`);
-            tree.setAttribute('look-at-camera', ''); // Ausrichtung auf Kamera
+            // WICHTIG: Stellt sicher, dass die Bäume immer zur Kamera zeigen
+            tree.setAttribute('look-at-camera', ''); 
 
             tree.setAttribute('material', {
                 src: 'assets/tannenbaum.png',
                 alphaTest: 0.5,
                 transparent: true
             });
+
+            targetObject.appendChild(tree);
         }
-        
-for (let i = 0; i < treeCount; i++) {
-    const tree = document.createElement('a-plane');
 
-    const sizeX = 1.5;
-    const sizeY = 2.5;
-
-    const posX = (Math.random() - 0.5) * 10;
-    const posZ = (Math.random() - 0.5) * 10;
-    const posY = -1.2;
-
-    tree.setAttribute('width', sizeX);
-    tree.setAttribute('height', sizeY);
-    tree.setAttribute('position', `${posX} ${posY} ${posZ}`);
-    tree.setAttribute('material', {
-        src: 'assets/tannenbaum.png',
-        alphaTest: 0.5,
-        transparent: true
-    });
-
-    targetObject.appendChild(tree);
-}
-        
-/// --- HIER WIRD DER SCHNEEBODEN HINZUGEFÜGT ---
+        // ❄️ SCHNEEBODEN ❄️
         const snowGround = document.createElement('a-plane');
+        const groundSize = 10; // Reduzierte Bodengröße, um näher an der AR-Markierung zu sein
 
-        snowGround.setAttribute('width', 20);
-        snowGround.setAttribute('height', 20);
+        snowGround.setAttribute('width', groundSize);
+        snowGround.setAttribute('height', groundSize);
         snowGround.setAttribute('rotation', '-90 0 0'); 
-        snowGround.setAttribute('position', '0 -2.5 0'); 
+        snowGround.setAttribute('position', `0 ${treePosY} 0`); // Position angepasst, damit Bäume darauf stehen
 
         snowGround.setAttribute('material', {
             src: 'assets/snowground.png',
-            repeat: '10 10', 
+            repeat: '5 5', // Repeat angepasst
             transparent: true,
             alphaTest: 0.1, 
         });
 
         targetObject.appendChild(snowGround); 
-        // --- ENDE DES NEUEN CODES ---
-
-    </script>
+    </script>
 </body>
 
 </html>
