@@ -9,16 +9,10 @@
 
 <body>
     <script src="js/simple-ar.min.js" onload="onWasmLoaded();"></script>
- <a-scene>
-        <a-assets>
-            <audio id="backgroundMusic" src="assets/background_music.mp3" preload="auto"></audio>
-        </a-assets>
-
-        <script src="js/simple-ar.min.js" onload="onWasmLoaded();"></script>
-        
+    <a-scene>
         <a-entity simple-ar="src: assets/schneemann.jpeg; minCutOffValue: 1; betaValue:0.1;">
             <a-entity id="snow"></a-entity>
-            <a-sound src="#backgroundMusic" autoplay="true" loop="true" volume="0.5"></a-sound>
+            <a-sound src="assets/background_music.mp3" autoplay="true" loop="true" volume="0.5"></a-sound>
         </a-entity>
         <a-camera position="0 0 0"></a-camera>
     </a-scene>
